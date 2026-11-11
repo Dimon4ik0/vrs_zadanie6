@@ -105,6 +105,82 @@ uint8_t i2c_master_read_byte(uint8_t slave_address, uint8_t register_address)
 }
 
 
+
+int32_t I2C1_Read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *p_data, uint16_t len)
+{
+    uint32_t timeout = 100000;
+
+    // Step 1: Send register address (SOFTEND mode prevents STOP generation)
+    LL_I2C_HandleTransfer(I2C1, dev_addr << 1, LL_I2C_ADDRSLAVE_7BIT, 1, LL_I2C_MODE_SOFTEND, LL_I2C_GENERATE_START_WRITE);
+
+    while(!LL_I2C_IsActiveFlag_TXIS(I2C1))
+    {
+        if(--timeout == 0) return -1;
+    }
+    LL_I2C_TransmitData8(I2C1, reg_addr);
+
+    timeout = 100000;
+    while(!LL_I2C_IsActiveFlag_TC(I2C1))
+    {
+        if(--timeout == 0) return -1;
+    }
+
+    // Step 2: Repeated START & read 'len' bytes in a single transaction
+    LL_I2C_HandleTransfer(I2C1, dev_addr << 1, LL_I2C_ADDRSLAVE_7BIT, len, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_READ);
+
+    for(uint16_t i = 0; i < len; i++)
+    {
+        timeout = 100000;
+        while(!LL_I2C_IsActiveFlag_RXNE(I2C1))
+        {
+            if(--timeout == 0) return -1;
+        }
+        p_data[i] = LL_I2C_ReceiveData8(I2C1);
+    }
+
+    timeout = 100000;
+    while(!LL_I2C_IsActiveFlag_STOP(I2C1))
+    {
+        if(--timeout == 0) return -1;
+    }
+    LL_I2C_ClearFlag_STOP(I2C1);
+
+    return 0;
+}
+
+int32_t I2C1_Write(uint8_t dev_addr, uint8_t reg_addr, const uint8_t *p_data, uint16_t len)
+{
+    uint32_t timeout = I2C_TIMEOUT;
+
+    // Send register address + data bytes in a single transaction
+    LL_I2C_HandleTransfer(I2C1, dev_addr << 1, LL_I2C_ADDRSLAVE_7BIT, 1 + len, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
+
+    // Send register address
+    while (!LL_I2C_IsActiveFlag_TXIS(I2C1)) {
+        if (--timeout == 0) return -1;
+    }
+    LL_I2C_TransmitData8(I2C1, reg_addr);
+
+    // Send data buffer bytes
+    for (uint16_t i = 0; i < len; i++) {
+        timeout = I2C_TIMEOUT;
+        while (!LL_I2C_IsActiveFlag_TXIS(I2C1)) {
+            if (--timeout == 0) return -1;
+        }
+        LL_I2C_TransmitData8(I2C1, p_data[i]);
+    }
+
+    // Wait for STOP condition
+    timeout = I2C_TIMEOUT;
+    while (!LL_I2C_IsActiveFlag_STOP(I2C1)) {
+        if (--timeout == 0) return -1;
+    }
+    LL_I2C_ClearFlag_STOP(I2C1);
+
+    return 0;
+}
+
+
 void I2C1_EV_IRQHandler(void)
 {
 	// Check RXNE flag value in ISR register

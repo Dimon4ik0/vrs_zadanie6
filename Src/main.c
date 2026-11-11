@@ -23,6 +23,7 @@
 #include "i2c.h"
 #include "gpio.h"
 
+
 // I2C slave device useful information
 #define 	LSM6DS0_DEVICE_ADDRESS		0xD6U
 #define 	LSM6DS0_WHO_AM_I_VALUE		0x68U
@@ -44,14 +45,14 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
 
+
+  hts221_init(I2C1_Read, I2C1_Write);
+  lps25hb_init(I2C1_Read, I2C1_Write);
   while (1)
   {
-	  if(i2c_master_read_byte(LSM6DS0_DEVICE_ADDRESS, LSM6DS0_WHO_AM_I_ADDRES) == LSM6DS0_WHO_AM_I_VALUE)
-	  {
-		  LL_GPIO_TogglePin(GPIOB, LL_GPIO_PIN_7);
-	  }
 
-	  LL_mDelay(100);
+
+	  LL_mDelay(500);
   }
 }
 

@@ -25,6 +25,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <stdint,h>
 
 /* USER CODE BEGIN Includes */
 
@@ -37,6 +38,11 @@
 void MX_I2C1_Init(void);
 /* USER CODE BEGIN Prototypes */
 uint8_t i2c_master_read_byte(uint8_t slave_address, uint8_t register_address);
+typedef int32_t (*i2c_write_fn)(uint8_t dev_addr, uint8_t reg_addr, const uint8_t *p_data, uint16_t len);
+typedef int32_t (*i2c_read_fn)(uint8_t dev_addr, uint8_t reg_addr, uint8_t *p_data, uint16_t len);
+
+int32_t I2C1_Write(uint8_t dev_addr, uint8_t reg_addr, const uint8_t *p_data, uint16_t len);
+int32_t I2C1_Read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *p_data, uint16_t len);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
