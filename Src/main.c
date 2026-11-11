@@ -48,7 +48,7 @@ int main(void)
   {
 	  if(i2c_master_read_byte(LSM6DS0_DEVICE_ADDRESS, LSM6DS0_WHO_AM_I_ADDRES) == LSM6DS0_WHO_AM_I_VALUE)
 	  {
-		  LL_GPIO_TogglePin(GPIOB, LL_GPIO_PIN_3);
+		  LL_GPIO_TogglePin(GPIOB, LL_GPIO_PIN_7);
 	  }
 
 	  LL_mDelay(100);
