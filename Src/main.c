@@ -22,6 +22,8 @@
 #include "main.h"
 #include "i2c.h"
 #include "gpio.h"
+#include "hts221.h"
+#include "lps25hb.h"
 
 
 // I2C slave device useful information
@@ -31,6 +33,18 @@
 
 
 void SystemClock_Config(void);
+
+
+uint8_t hts_who_am_i = 0;
+uint8_t lps_who_am_i = 0;
+uint8_t hts_calib_bytes[4] = {0};
+uint8_t ctrl_readback = 0;
+
+int32_t test1_hts_id_status = -1;
+int32_t test2_lps_id_status = -1;
+int32_t test3_multibyte_status = -1;
+int32_t test4_write_status = -1;
+int32_t test5_readback_status = -1;
 
 
 int main(void)
@@ -46,12 +60,29 @@ int main(void)
   MX_I2C1_Init();
 
 
-  hts221_init(I2C1_Read, I2C1_Write);
-  lps25hb_init(I2C1_Read, I2C1_Write);
+  //hts221_init(I2C1_Read, I2C1_Write);
+  //lps25hb_init(I2C1_Read, I2C1_Write);
+
+  // --- TEST 1: Single-byte read WHO_AM_I (HTS221 at address 0x5F) ---
+    // Expected ID: 0xBC (188 decimal)
+    test1_hts_id_status = I2C1_Read(0x5F, 0x0F, &hts_who_am_i, 1);
+
+    // --- TEST 2: Single-byte read WHO_AM_I (LPS25HB at address 0x5D) ---
+    // Expected ID: 0xBD (189 decimal)
+    test2_lps_id_status = I2C1_Read(0x5D, 0x0F, &lps_who_am_i, 1);
+
+    // --- TEST 3: Multi-byte read (4 calibration bytes from HTS221) ---
+    // Bit 7 (0x80) enables automatic register address increment
+    test3_multibyte_status = I2C1_Read(0x5F, 0x30 | 0x80, hts_calib_bytes, 4);
+
+    // --- TEST 4 & 5: Single-byte Write & Verification (LPS25HB CTRL_REG1) ---
+    uint8_t ctrl1_config = 0x90; // Active mode (1Hz ODR)
+    test4_write_status = I2C1_Write(0x5D, 0x20, &ctrl1_config, 1);
+    test5_readback_status = I2C1_Read(0x5D, 0x20, &ctrl_readback, 1);
+
+
   while (1)
   {
-
-
 	  LL_mDelay(500);
   }
 }

@@ -20,6 +20,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "i2c.h"
 
+#define I2C_TIMEOUT 100000
+
 /* USER CODE BEGIN 0 */
 uint8_t i2c_rx_data = 0;
 

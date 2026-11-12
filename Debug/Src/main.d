@@ -18,7 +18,9 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_ll_dma.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_ll_gpio.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_ll_usart.h ../Inc/i2c.h \
- ../Inc/main.h ../Inc/gpio.h
+ ../Inc/main.h ../Inc/gpio.h \
+ C:/Users/petri/Desktop/vrs_zadanie/vrs_zadanie6/vrs_cvicenie_6/HTS221/hts221.h \
+ C:/Users/petri/Desktop/vrs_zadanie/vrs_zadanie6/vrs_cvicenie_6/LPS25HB/lps25hb.h
 ../Inc/main.h:
 ../Drivers/CMSIS/Device/ST/STM32F3xx/Include/stm32f3xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F3xx/Include/stm32f303x8.h:
@@ -42,3 +44,5 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
 ../Inc/i2c.h:
 ../Inc/main.h:
 ../Inc/gpio.h:
+C:/Users/petri/Desktop/vrs_zadanie/vrs_zadanie6/vrs_cvicenie_6/HTS221/hts221.h:
+C:/Users/petri/Desktop/vrs_zadanie/vrs_zadanie6/vrs_cvicenie_6/LPS25HB/lps25hb.h:
